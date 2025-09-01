@@ -1,8 +1,9 @@
+// Register.jsx
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth, db } from '../../firebase/config';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { Container, Typography, TextField, Button, Paper, Stack, Divider, Box } from '@mui/material';
 
 function Register() {
@@ -19,31 +20,34 @@ function Register() {
 
         try {
             let userCredential;
-
             if (isLogin) {
                 userCredential = await signInWithEmailAndPassword(auth, email, password);
+                const userDocRef = doc(db, 'users', userCredential?.user?.uid);
+                const userDoc = await getDoc(userDocRef);
 
-                const userDoc = await getDoc(doc(db, 'users', userCredential?.user?.uid));
-                if (!userDoc?.exists()) {
-                    await setDoc(doc(db, 'users', userCredential?.user?.uid), {
+                if (!userDoc.exists()) {
+                    await setDoc(userDocRef, {
+                        name: userCredential?.user?.displayName || 'Sin nombre',
                         email,
+                        role: 'user',
                         hasSpun: false,
                         amigoSecreto: null,
-                        name: 'Sin nombre',
                         createdAt: new Date(),
                     });
                 };
             } else {
                 userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                await updateProfile(userCredential?.user, { displayName: name });
                 await setDoc(doc(db, 'users', userCredential?.user?.uid), {
                     name,
                     email,
                     hasSpun: false,
                     amigoSecreto: null,
+                    role: 'user',
                     createdAt: new Date(),
                 });
             };
-            navigate('/roulette');
+            navigate('/');
         } catch (error) {
             console.error('Error:', error);
             alert(error.message);
@@ -85,18 +89,23 @@ function Register() {
                         onChange={e => setPassword(e.target.value)}
                     />
                     <Button
-                        variant='contained'
-                        color='primary'
                         size='large'
-                        onClick={handleAuth}
+                        color='primary'
                         disabled={loading}
+                        variant='contained'
+                        onClick={handleAuth}
                         sx={{ py: 1.5, fontWeight: 'bold' }}
                     >
                         {loading ? 'Procesando...' : isLogin ? 'Iniciar sesión' : 'Registrarse'}
                     </Button>
                     <Divider>o</Divider>
                     <Box textAlign='center'>
-                        <Button variant='text' color='secondary' onClick={() => setIsLogin(!isLogin)}>
+                        <Button
+                            variant='text'
+                            color='primary'
+                            onClick={() => setIsLogin(!isLogin)}
+                            sx={{ fontWeight: 'bold', ':hover': { color: '#fff' } }}
+                        >
                             {isLogin ? '¿No tienes cuenta? Regístrate' : '¿Ya tienes cuenta? Inicia sesión'}
                         </Button>
                     </Box>

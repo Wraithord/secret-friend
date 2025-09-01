@@ -1,25 +1,45 @@
-import { auth, firebaseInitialized } from './firebase/config.js';
 import { useState, useEffect } from 'react';
+import { auth, db, firebaseInitialized } from './firebase/config.js';
 import { BrowserRouter as Router, Routes, Route, Navigate, Link } from 'react-router-dom';
 
 import Home from './components/Home/Home.jsx';
 import Loading from './components/Loading.jsx';
-import Roulette from './components/Roulette.jsx';
+import Admin from './components/Admin/Admin.jsx';
+import { doc, getDoc } from 'firebase/firestore';
 import ErrorPage from './components/ErrorPage.jsx';
+import SecretFriend from './components/SecretFriend.jsx';
 import Register from './components/Register/Register.jsx';
 
 function App() {
-    const [currentUser, setCurrentUser] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [currentUser, setCurrentUser] = useState(null);
+    const [currentUserRole, setCurrentUserRole] = useState(null);
 
     useEffect(() => {
         if (!firebaseInitialized || !auth) {
             setLoading(false);
             return;
-        }
+        };
 
-        const unsubscribe = auth.onAuthStateChanged(user => {
+        const unsubscribe = auth.onAuthStateChanged(async user => {
             setCurrentUser(user);
+
+            if (user) {
+                try {
+                    const userDoc = await getDoc(doc(db, 'users', user.uid));
+                    if (userDoc.exists()) {
+                        setCurrentUserRole(userDoc.data().role || 'user');
+                    } else {
+                        setCurrentUserRole('user');
+                    }
+                } catch (error) {
+                    console.error('Error al obtener rol del usuario:', error);
+                    setCurrentUserRole('user');
+                }
+            } else {
+                setCurrentUserRole(null);
+            };
+
             setLoading(false);
         }, error => {
             console.error('Error en onAuthStateChanged:', error);
@@ -34,6 +54,7 @@ function App() {
         try {
             await auth.signOut();
             setCurrentUser(null);
+            setCurrentUserRole(null);
         } catch (error) {
             console.error('Error al cerrar sesión:', error);
         }
@@ -46,19 +67,23 @@ function App() {
         <Router>
             <nav style={{ padding: '1rem', textAlign: 'center' }}>
                 <Link to='/home' style={{ margin: '0 1rem' }}>Inicio</Link>
-                {currentUser && <Link to='/roulette' style={{ margin: '0 1rem' }}>Ruleta</Link>}
                 {currentUser ? (
-                    <button onClick={handleLogout} style={{ margin: '0 1rem' }}>Cerrar sesión</button>
+                    <>
+                        {currentUserRole === 'admin' && (
+                            <Link to='/admin' style={{ margin: '0 1rem' }}>Administración</Link>
+                        )}
+                        <button onClick={handleLogout} style={{ margin: '0 1rem' }}>Cerrar sesión</button>
+                    </>
                 ) : (
                     <Link to='/register' style={{ margin: '0 1rem' }}>Iniciar sesión / Registro</Link>
                 )}
             </nav>
-
             <Routes>
                 <Route path='/' element={<Navigate to='/home' replace />} />
-                <Route path='/home' element={<Home currentUser={currentUser} />} />
-                <Route path='/register' element={currentUser ? <Navigate to='/roulette' replace /> : <Register />} />
-                <Route path='/roulette' element={currentUser ? <Roulette /> : <Navigate to='/register' replace />} />
+                <Route path='/home' element={<Home currentUser={currentUser} currentUserRole={currentUserRole} />} />
+                <Route path='/register' element={currentUser ? <Navigate to='/secretFriend' replace /> : <Register />} />
+                <Route path='/secretFriend' element={currentUser ? <SecretFriend /> : <Navigate to='/register' replace />} />
+                <Route path='/admin' element={currentUser && currentUserRole === 'admin' ? <Admin /> : <Navigate to='/home' replace />} />
                 <Route path='*' element={<Navigate to='/home' replace />} />
             </Routes>
         </Router>
