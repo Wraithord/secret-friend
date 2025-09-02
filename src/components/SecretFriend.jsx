@@ -136,19 +136,26 @@ function SecretFriend() {
 
     return (
         <Container maxWidth='lg' sx={{ height: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Paper sx={{ p: 10, borderRadius: 3, background: 'linear-gradient(135deg, #f8b400, #f85c50)' }}>
-                <Typography 
-                    variant='h4'
-                    gutterBottom
-                    component={motion.div}
-                    textTransform='uppercase'
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ duration: 0.8 }}
-                    initial={{ y: -30, opacity: 0 }}
-                    sx={{ fontWeight: 'bold', color: '#fff', mb: 4, textAlign: 'center' }}
-                >
-                    {!winner ? '¡Adivina tu amigo secreto!' : 'Tu amigo secreto es'}
-                </Typography>
+            <Paper sx={{ p: 20, borderRadius: 3, background: 'linear-gradient(135deg,rgb(251, 255, 0),rgb(255, 0, 132))' }}>
+                <Box sx={{ textAlign: 'center', mb: 4 }}>
+                    <Typography
+                        variant='h2'
+                        sx={{ fontWeight: 'bold', color: '#fff', textTransform: 'uppercase' }}
+                    >
+                        {`¡Hola, ${user?.name?.trim()}!`}
+                    </Typography>
+                    <Typography
+                        variant='h2'
+                        component={motion.div}
+                        textTransform='uppercase'
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ duration: 0.8 }}
+                        initial={{ y: -30, opacity: 0 }}
+                        sx={{ fontWeight: 'bold', color: '#fff', mt: 2 }}
+                    >
+                        {!winner ? '¡Adivina tu amigo secreto!' : 'Tu amigo secreto es'}
+                    </Typography>
+                </Box>
                 {!winner && (
                     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
                         <Button
@@ -169,14 +176,14 @@ function SecretFriend() {
                         animate={{ scale: 1, opacity: 1 }}
                         transition={{ duration: 1.2, ease: 'easeOut' }}
                     >
-                        <Box sx={{ mt: 4, textAlign: 'center' }}>
-                            <Typography variant='h3' sx={{ fontWeight: 'bold', color: '#fff' }}>
+                        <Box sx={{ mt: 4, textAlign: 'center', background: 'linear-gradient(135deg,rgb(0, 182, 248),rgb(80, 150, 248))', borderRadius: 4, p: 2 }}>
+                            <Typography variant='h2' sx={{ fontWeight: 'bold', color: '#fff', textTransform: 'uppercase' }}>
                                 {`🎉 ${winner?.name} 🎉`}
                             </Typography>
                         </Box>
                     </motion.div>
                 )}
-                {user?.role === 'admin' && (
+                {user?.role === 'admin' && !winner && (
                     <Box sx={{ mt: 4, textAlign: 'center' }}>
                         <Button
                             color="secondary"
