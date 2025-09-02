@@ -105,8 +105,8 @@ function SecretFriend() {
     
         const idsReceivers = new Set(updates?.map(u => u?.receiver?.id));
         if (idsReceivers?.size !== users?.length) {
-            console.error("❌ Algo salió mal, hay repetidos");
-            alert("Error en la asignación, intenta de nuevo");
+            console.error('❌ Algo salió mal, hay repetidos');
+            alert('Error en la asignación, intenta de nuevo');
             return;
         };
     
@@ -128,7 +128,7 @@ function SecretFriend() {
             });            
         } catch (err) {
             console.error(err);
-            alert("❌ Error al asignar amigos secretos");
+            alert('❌ Error al asignar amigos secretos');
         };
     };
 
@@ -136,7 +136,7 @@ function SecretFriend() {
 
     return (
         <Container maxWidth='lg' sx={{ height: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Paper sx={{ p: 20, borderRadius: 3, background: 'linear-gradient(135deg,rgb(251, 255, 0),rgb(255, 0, 132))' }}>
+            <Paper sx={{ p: 15, borderRadius: 3, background: 'linear-gradient(40deg,rgb(15, 142, 206),rgb(216, 14, 119))' }}>
                 <Box sx={{ textAlign: 'center', mb: 4 }}>
                     <Typography
                         variant='h2'
@@ -160,10 +160,22 @@ function SecretFriend() {
                     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
                         <Button
                             onClick={spin}
-                            color='primary'
-                            variant='contained'
                             disabled={spinning}
-                            sx={{ px: 5, py: 1.5, fontWeight: 'bold', fontSize: '1rem' }}
+                            sx={{
+                                px: 6,
+                                py: 1.5,
+                                color: '#fff',
+                                fontWeight: 'bold',
+                                fontSize: '1.1rem',
+                                backgroundColor: '#0045C4',
+                                transition: 'all 0.2s ease',
+                                '&:hover': {
+                                    backgroundColor: '#0026A3',
+                                },
+                                '&:active': {
+                                    backgroundColor: '#001A80',
+                                },
+                            }}
                         >
                             {spinning ? 'Buscando...' : 'Buscar'}
                         </Button>
@@ -176,7 +188,7 @@ function SecretFriend() {
                         animate={{ scale: 1, opacity: 1 }}
                         transition={{ duration: 1.2, ease: 'easeOut' }}
                     >
-                        <Box sx={{ mt: 4, textAlign: 'center', background: 'linear-gradient(135deg,rgb(0, 182, 248),rgb(80, 150, 248))', borderRadius: 4, p: 2 }}>
+                        <Box sx={{ mt: 4, textAlign: 'center', background: 'linear-gradient(60deg,rgb(69, 154, 113),rgb(80, 150, 248))', borderRadius: 4, p: 2 }}>
                             <Typography variant='h2' sx={{ fontWeight: 'bold', color: '#fff', textTransform: 'uppercase' }}>
                                 {`🎉 ${winner?.name} 🎉`}
                             </Typography>
@@ -186,10 +198,25 @@ function SecretFriend() {
                 {user?.role === 'admin' && !winner && (
                     <Box sx={{ mt: 4, textAlign: 'center' }}>
                         <Button
-                            color="secondary"
-                            variant="contained"
+                            color='secondary'
+                            variant='contained'
                             onClick={assignSecretFriends}
-                            sx={{ fontWeight: 'bold', px: 4, py: 1.5 }}
+                            sx={{
+                                px: 6,
+                                py: 1.5,
+                                color: '#fff',
+                                fontWeight: 'bold',
+                                fontSize: '1.1rem',
+                                boxShadow: '0 4px 15px rgba(0,0,0,0.3)',
+                                backgroundColor: '#0045C4',
+                                transition: 'all 0.2s ease',
+                                '&:hover': {
+                                    backgroundColor: '#0026A3',
+                                },
+                                '&:active': {
+                                    backgroundColor: '#001A80',
+                                },
+                            }}                        
                         >
                             Repartir automáticamente
                         </Button>

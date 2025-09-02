@@ -59,57 +59,64 @@ function Register() {
     return (
         <Container maxWidth='sm' sx={{ mt: 8 }}>
             <Paper sx={{ p: 4 }}>
-                <Stack spacing={2}>
-                    <Typography variant='h4' align='center' sx={{ mb: 3, fontWeight: 'bold' }}>
-                        {isLogin ? 'Bienvenido de nuevo' : 'Crea tu cuenta'}
-                    </Typography>
-                    {!isLogin && (
+                <form onSubmit={e => { 
+                    e.preventDefault(); 
+                    handleAuth(); 
+                }}>
+                    <Stack spacing={2}>
+                        <Typography variant='h4' align='center' sx={{ mb: 3, fontWeight: 'bold' }}>
+                            {isLogin ? 'Bienvenido de nuevo' : 'Crea tu cuenta'}
+                        </Typography>
+                        {!isLogin && (
+                            <TextField
+                                fullWidth
+                                value={name}
+                                label='Nombre completo'
+                                placeholder='Tu nombre'
+                                onChange={e => setName(e.target.value)}
+                            />
+                        )}
                         <TextField
                             fullWidth
-                            value={name}
-                            label='Nombre completo'
-                            placeholder='Tu nombre'
-                            onChange={e => setName(e.target.value)}
+                            type="email"
+                            value={email}
+                            name="userEmail"
+                            autoComplete="email"
+                            label="Correo electrónico"
+                            placeholder="ejemplo@correo.com"
+                            onChange={e => setEmail(e.target.value)}
                         />
-                    )}
-                    <TextField
-                        fullWidth
-                        type='email'
-                        value={email}
-                        label='Correo electrónico'
-                        placeholder='ejemplo@correo.com'
-                        onChange={e => setEmail(e.target.value)}
-                    />
-                    <TextField
-                        fullWidth
-                        type='password'
-                        value={password}
-                        label='Contraseña'
-                        placeholder='********'
-                        onChange={e => setPassword(e.target.value)}
-                    />
-                    <Button
-                        size='large'
-                        color='primary'
-                        disabled={loading}
-                        variant='contained'
-                        onClick={handleAuth}
-                        sx={{ py: 1.5, fontWeight: 'bold' }}
-                    >
-                        {loading ? 'Procesando...' : isLogin ? 'Iniciar sesión' : 'Registrarse'}
-                    </Button>
-                    <Divider>o</Divider>
-                    <Box textAlign='center'>
+                        <TextField
+                            fullWidth
+                            type='password'
+                            value={password}
+                            label='Contraseña'
+                            placeholder='********'
+                            onChange={e => setPassword(e.target.value)}
+                        />
                         <Button
-                            variant='text'
+                            type='submit'
+                            size='large'
                             color='primary'
-                            onClick={() => setIsLogin(!isLogin)}
-                            sx={{ fontWeight: 'bold', ':hover': { color: '#fff' } }}
+                            disabled={loading}
+                            variant='contained'
+                            sx={{ py: 1.5, fontWeight: 'bold' }}
                         >
-                            {isLogin ? '¿No tienes cuenta? Regístrate' : '¿Ya tienes cuenta? Inicia sesión'}
+                            {loading ? 'Procesando...' : isLogin ? 'Iniciar sesión' : 'Registrarse'}
                         </Button>
-                    </Box>
-                </Stack>
+                        <Divider>o</Divider>
+                        <Box textAlign='center'>
+                            <Button
+                                variant='text'
+                                color='primary'
+                                onClick={() => setIsLogin(!isLogin)}
+                                sx={{ fontWeight: 'bold', ':hover': { color: '#fff' } }}
+                            >
+                                {isLogin ? '¿No tienes cuenta? Regístrate' : '¿Ya tienes cuenta? Inicia sesión'}
+                            </Button>
+                        </Box>
+                    </Stack>
+                </form>
             </Paper>
         </Container>
     );
