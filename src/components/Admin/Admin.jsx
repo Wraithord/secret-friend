@@ -1,8 +1,9 @@
 import Loading from '../Loading';
 import { db } from '../../firebase/config';
 import { useState, useEffect } from 'react';
+import { doc, updateDoc } from 'firebase/firestore';
 import { collection, addDoc, getDocs } from 'firebase/firestore';
-import { Container, Paper, Typography, Stack, TextField, Button, Box, Divider, TableContainer, Table, TableHead, TableRow, TableCell, TableBody } from '@mui/material';
+import { Container, Paper, Typography, Stack, TextField, Button, Divider, TableContainer, Table, TableHead, TableRow, TableCell, TableBody } from '@mui/material';
 
 function Admin() {
     const [name, setName] = useState('');
@@ -98,9 +99,6 @@ function Admin() {
     );
 };
 
-import { doc, updateDoc } from 'firebase/firestore';
-
-// Dentro de UsersTable
 function UsersTable({ users }) {
     const sortedUsers = users?.slice()?.sort((a, b) => {
         if (!a?.name) return 1;
@@ -118,7 +116,7 @@ function UsersTable({ users }) {
         } catch (err) {
             console.error(err);
             alert('Error al borrar amigo secreto');
-        }
+        };
     };
 
     return (
