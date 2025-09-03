@@ -1,9 +1,11 @@
 import { getAuth } from 'firebase/auth';
 import { initializeApp } from 'firebase/app';
+import { getStorage } from 'firebase/storage';
 import { getFirestore } from 'firebase/firestore';
 
 let db = null;
 let auth = null;
+let storage = null;
 let firebaseInitialized = false;
 
 try {
@@ -39,10 +41,11 @@ try {
     const app = initializeApp(firebaseConfig);
     auth = getAuth(app);
     db = getFirestore(app);
+    storage = getStorage(app);
     firebaseInitialized = true;
 
 } catch (error) {
     console.error('Error al inicializar Firebase:', error.message);
 };
 
-export { auth, db, firebaseInitialized };
+export { auth, db, storage, firebaseInitialized };

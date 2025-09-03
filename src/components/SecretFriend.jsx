@@ -23,7 +23,7 @@ function SecretFriend() {
                 setUser(currentUserData);
 
                 if (currentUserData?.amigoSecreto) {
-                    setWinner(currentUserData.amigoSecreto);
+                    setWinner(currentUserData?.amigoSecreto);
                 };
 
                 const usersSnapshot = await getDocs(collection(db, 'users'));
@@ -69,7 +69,8 @@ function SecretFriend() {
         await updateDoc(doc(db, 'users', user?.id), {
             amigoSecreto: { 
                 id: receiver?.id, 
-                name: receiver?.name, 
+                name: receiver?.name,
+                photoBase64: receiver?.photoBase64 || null,
             },
             hasSpun: true,
         });
@@ -77,7 +78,12 @@ function SecretFriend() {
         setUser(prev => ({ 
             ...prev,
             hasSpun: true, 
-            amigoSecreto: receiver,
+            amigoSecreto: {
+                id: receiver?.id,
+                name: receiver?.name,
+                email: receiver?.email || null,
+                photoBase64: receiver?.photoBase64 || null,
+            },
         }));
         setWinner(receiver);
         setSpinning(false);
@@ -117,6 +123,8 @@ function SecretFriend() {
                     amigoSecreto: {
                         id: receiver?.id,
                         name: receiver?.name,
+                        email: receiver?.email || null,
+                        photoBase64: receiver?.photoBase64 || null,
                     },
                 })
             );
@@ -125,7 +133,7 @@ function SecretFriend() {
             console.log('✅ Amigos secretos asignados');
             updates.forEach(({ giver, receiver }) => {
                 console.log(`${giver?.name} → ${receiver?.name}`);
-            });            
+            });
         } catch (err) {
             console.error(err);
             alert('❌ Error al asignar amigos secretos');
@@ -134,9 +142,11 @@ function SecretFriend() {
 
     if (loading) return <Loading/>;
 
+    console.log('winner:', winner);
+
     return (
         <Container maxWidth='lg' sx={{ height: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Paper sx={{ p: 15, borderRadius: 3, background: 'linear-gradient(40deg,rgb(15, 142, 206),rgb(216, 14, 119))' }}>
+            <Paper sx={{ p: 10, borderRadius: 3, background: 'linear-gradient(40deg,rgb(15, 142, 206),rgb(216, 14, 119))' }}>
                 <Box sx={{ textAlign: 'center', mb: 4 }}>
                     <Typography
                         variant='h2'
@@ -169,12 +179,8 @@ function SecretFriend() {
                                 fontSize: '1.1rem',
                                 backgroundColor: '#0045C4',
                                 transition: 'all 0.2s ease',
-                                '&:hover': {
-                                    backgroundColor: '#0026A3',
-                                },
-                                '&:active': {
-                                    backgroundColor: '#001A80',
-                                },
+                                '&:hover': { backgroundColor: '#0026A3' },
+                                '&:active': { backgroundColor: '#001A80' },
                             }}
                         >
                             {spinning ? 'Buscando...' : 'Buscar'}
@@ -183,15 +189,43 @@ function SecretFriend() {
                     </Box>
                 )}
                 {winner && (
-                    <motion.div
-                        initial={{ scale: 0, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
+                    <motion.div 
+                        initial={{ scale: 0, opacity: 0 }} 
+                        animate={{ scale: 1, opacity: 1 }} 
                         transition={{ duration: 1.2, ease: 'easeOut' }}
                     >
-                        <Box sx={{ mt: 4, textAlign: 'center', background: 'linear-gradient(60deg,rgb(69, 154, 113),rgb(80, 150, 248))', borderRadius: 4, p: 2 }}>
-                            <Typography variant='h2' sx={{ fontWeight: 'bold', color: '#fff', textTransform: 'uppercase' }}>
+                        <Box
+                            sx={{
+                                mt: 4,
+                                textAlign: 'center',
+                                background: 'linear-gradient(60deg,rgb(69, 154, 113),rgb(80, 150, 248))',
+                                borderRadius: 4,
+                                p: 2,
+                            }}
+                        >
+                            <Typography
+                                variant='h2'
+                                sx={{
+                                    fontWeight: 'bold',
+                                    color: '#fff',
+                                    textTransform: 'uppercase',
+                                }}
+                            >
                                 {`🎉 ${winner?.name} 🎉`}
                             </Typography>
+                            {winner?.photoBase64 && (
+                                <Box component='img' src={winner.photoBase64} alt={winner.name}
+                                    sx={{
+                                        mt: 2,
+                                        width: 150,
+                                        height: 200,
+                                        boxShadow: 3,
+                                        objectFit: 'cover',
+                                        borderRadius: '10%',
+                                        border: '4px solid white',
+                                    }}
+                                />
+                            )}
                         </Box>
                     </motion.div>
                 )}
@@ -207,24 +241,20 @@ function SecretFriend() {
                                 color: '#fff',
                                 fontWeight: 'bold',
                                 fontSize: '1.1rem',
-                                boxShadow: '0 4px 15px rgba(0,0,0,0.3)',
                                 backgroundColor: '#0045C4',
                                 transition: 'all 0.2s ease',
-                                '&:hover': {
-                                    backgroundColor: '#0026A3',
-                                },
-                                '&:active': {
-                                    backgroundColor: '#001A80',
-                                },
+                                boxShadow: '0 4px 15px rgba(0,0,0,0.3)',
+                                '&:hover': { backgroundColor: '#0026A3' },
+                                '&:active': { backgroundColor: '#001A80' },
                             }}                        
                         >
-                            Repartir automáticamente
+                            {`Repartir automáticamente`}
                         </Button>
                     </Box>
                 )}
             </Paper>
         </Container>
     );
-}
+};
 
 export default SecretFriend;
