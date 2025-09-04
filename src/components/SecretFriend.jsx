@@ -1,4 +1,5 @@
 import Loading from './Loading';
+import Confetti from 'react-confetti';
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { auth, db } from '../firebase/config';
@@ -142,11 +143,40 @@ function SecretFriend() {
 
     if (loading) return <Loading/>;
 
-    console.log('winner:', winner);
-
     return (
-        <Container maxWidth='lg' sx={{ height: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Paper sx={{ p: 10, borderRadius: 3, background: 'linear-gradient(40deg,rgb(15, 142, 206),rgb(216, 14, 119))' }}>
+        <Container
+            maxWidth='lg'
+            sx={{
+                height: '80vh',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+            }}
+        >
+            <Paper
+                component={motion.div}
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.8, ease: 'easeOut' }}
+                sx={{
+                    p: 10,
+                    borderRadius: 4,
+                    textAlign: 'center',
+                    border: '3px solid transparent',
+                    backgroundImage:
+                        'linear-gradient(270deg, #0f8ece, #d80e77, #0045C4), linear-gradient(90deg, #00c6ff, #ff0080)',
+                    backgroundSize: '600% 600%',
+                    animation: 'gradientShift 12s ease infinite',
+                    backgroundOrigin: 'border-box',
+                    backgroundClip: 'padding-box, border-box',
+                    '@keyframes gradientShift': {
+                        '0%': { backgroundPosition: '0% 50%' },
+                        '50%': { backgroundPosition: '100% 50%' },
+                        '100%': { backgroundPosition: '0% 50%' },
+                    },
+                    boxShadow: '0 8px 25px rgba(0,0,0,0.3)',
+                }}
+            >
                 <Box sx={{ textAlign: 'center', mb: 4 }}>
                     <Typography
                         variant='h2'
@@ -174,79 +204,87 @@ function SecretFriend() {
                             sx={{
                                 px: 6,
                                 py: 1.5,
-                                color: '#fff',
                                 fontWeight: 'bold',
                                 fontSize: '1.1rem',
-                                backgroundColor: '#0045C4',
-                                transition: 'all 0.2s ease',
-                                '&:hover': { backgroundColor: '#0026A3' },
-                                '&:active': { backgroundColor: '#001A80' },
+                                background: 'linear-gradient(90deg, #0045C4, #1565c0)',
+                                color: '#fff',
+                                boxShadow: '0 4px 15px rgba(0,0,0,0.3)',
+                                transition: 'all 0.3s ease',
+                                '&:hover': {
+                                    transform: 'scale(1.05)',
+                                    background: 'linear-gradient(90deg, #1565c0, #0045C4)',
+                                },
+                                '&:active': { transform: 'scale(0.97)' },
                             }}
                         >
                             {spinning ? 'Buscando...' : 'Buscar'}
                         </Button>
-                        {spinning && <CircularProgress color='inherit'/>}
+                        {spinning && <CircularProgress color='inherit' />}
                     </Box>
                 )}
                 {winner && (
-                    <motion.div 
-                        initial={{ scale: 0, opacity: 0 }} 
-                        animate={{ scale: 1, opacity: 1 }} 
-                        transition={{ duration: 1.2, ease: 'easeOut' }}
-                    >
-                        <Box
-                            sx={{
-                                mt: 4,
-                                textAlign: 'center',
-                                background: 'linear-gradient(60deg,rgb(69, 154, 113),rgb(80, 150, 248))',
-                                borderRadius: 4,
-                                p: 2,
-                            }}
-                        >
-                            <Typography
-                                variant='h2'
+                    <>
+                        <Confetti recycle={false} numberOfPieces={250} width={window.innerWidth} height={window.innerHeight}/>
+                        <motion.div initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 1.2, ease: 'easeOut' }}>
+                            <Box
                                 sx={{
-                                    fontWeight: 'bold',
-                                    color: '#fff',
-                                    textTransform: 'uppercase',
+                                    p: 2,
+                                    mt: 4,
+                                    borderRadius: 4,
+                                    textAlign: 'center',
+                                    boxShadow: '0 6px 20px rgba(0,0,0,0.25)',
+                                    background: 'linear-gradient(60deg,rgb(69, 154, 113),rgb(80, 150, 248))',
                                 }}
                             >
-                                {`🎉 ${winner?.name} 🎉`}
-                            </Typography>
-                            {winner?.photoBase64 && (
-                                <Box component='img' src={winner.photoBase64} alt={winner.name}
+                                <Typography
+                                    variant='h2'
                                     sx={{
-                                        mt: 2,
-                                        width: 150,
-                                        height: 200,
-                                        boxShadow: 3,
-                                        objectFit: 'cover',
-                                        borderRadius: '10%',
-                                        border: '4px solid white',
+                                        fontWeight: 'bold',
+                                        color: '#fff',
+                                        textTransform: 'uppercase',
                                     }}
-                                />
-                            )}
-                        </Box>
-                    </motion.div>
+                                >
+                                    {`🎉 ${winner?.name} 🎉`}
+                                </Typography>
+                                {winner?.photoBase64 && (
+                                    <Box
+                                        component='img'
+                                        src={winner.photoBase64}
+                                        alt={winner.name}
+                                        sx={{
+                                            mt: 2,
+                                            width: 150,
+                                            height: 200,
+                                            boxShadow: 3,
+                                            objectFit: 'cover',
+                                            borderRadius: '10%',
+                                            border: '4px solid white',
+                                        }}
+                                    />
+                                )}
+                            </Box>
+                        </motion.div>
+                    </>
                 )}
                 {user?.role === 'admin' && !winner && (
                     <Box sx={{ mt: 4, textAlign: 'center' }}>
                         <Button
-                            color='secondary'
-                            variant='contained'
                             onClick={assignSecretFriends}
                             sx={{
                                 px: 6,
                                 py: 1.5,
-                                color: '#fff',
                                 fontWeight: 'bold',
                                 fontSize: '1.1rem',
-                                backgroundColor: '#0045C4',
-                                transition: 'all 0.2s ease',
+                                background: 'linear-gradient(90deg, #0045C4, #1565c0)',
+                                color: '#fff',
                                 boxShadow: '0 4px 15px rgba(0,0,0,0.3)',
-                                '&:hover': { backgroundColor: '#0026A3' },
-                                '&:active': { backgroundColor: '#001A80' },
-                            }}                        
+                                transition: 'all 0.3s ease',
+                                '&:hover': {
+                                transform: 'scale(1.05)',
+                                background: 'linear-gradient(90deg, #1565c0, #0045C4)',
+                                },
+                                '&:active': { transform: 'scale(0.97)' },
+                            }}
                         >
                             {`Repartir automáticamente`}
                         </Button>
@@ -254,7 +292,7 @@ function SecretFriend() {
                 )}
             </Paper>
         </Container>
-    );
+    );      
 };
 
 export default SecretFriend;
