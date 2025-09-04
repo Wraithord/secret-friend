@@ -1,16 +1,18 @@
 import Loading from './Loading';
 import Confetti from 'react-confetti';
 import { motion } from 'framer-motion';
+import { useWindowSize } from 'react-use';
 import { useState, useEffect } from 'react';
 import { auth, db } from '../firebase/config';
+import { Container, Typography, Paper, Button, Box } from '@mui/material';
 import { doc, getDoc, getDocs, updateDoc, collection } from 'firebase/firestore';
-import { Container, Typography, Paper, Button, Box, CircularProgress } from '@mui/material';
 
 function SecretFriend() {
     const [user, setUser] = useState(null);
     const [users, setUsers] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const { width, height } = useWindowSize();
     const [winner, setWinner] = useState(null);
+    const [loading, setLoading] = useState(true);
     const [spinning, setSpinning] = useState(false);
 
     useEffect(() => {
@@ -159,33 +161,37 @@ function SecretFriend() {
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ duration: 0.8, ease: 'easeOut' }}
                 sx={{
-                    p: 10,
                     borderRadius: 4,
                     textAlign: 'center',
-                    border: '3px solid transparent',
-                    backgroundImage:
-                        'linear-gradient(270deg, #0f8ece, #d80e77, #0045C4), linear-gradient(90deg, #00c6ff, #ff0080)',
+                    p: { xs: 4, sm: 6, md: 10 },
                     backgroundSize: '600% 600%',
-                    animation: 'gradientShift 12s ease infinite',
                     backgroundOrigin: 'border-box',
+                    border: '3px solid transparent',
                     backgroundClip: 'padding-box, border-box',
+                    boxShadow: '0 8px 25px rgba(0,0,0,0.3)',
+                    animation: 'gradientShift 12s ease infinite',
                     '@keyframes gradientShift': {
                         '0%': { backgroundPosition: '0% 50%' },
                         '50%': { backgroundPosition: '100% 50%' },
                         '100%': { backgroundPosition: '0% 50%' },
                     },
-                    boxShadow: '0 8px 25px rgba(0,0,0,0.3)',
+                    backgroundImage: 'linear-gradient(270deg, #0f8ece, #d80e77, #0045C4), linear-gradient(90deg, #00c6ff, #ff0080)',
                 }}
             >
                 <Box sx={{ textAlign: 'center', mb: 4 }}>
                     <Typography
-                        variant='h2'
-                        sx={{ fontWeight: 'bold', color: '#fff', textTransform: 'uppercase' }}
+                        variant='h4'
+                        sx={{
+                            fontWeight: 'bold',
+                            color: '#fff',
+                            textTransform: 'uppercase',
+                            fontSize: { xs: '1.8rem', sm: '2.2rem', md: '3rem' },
+                        }}
                     >
                         {`¡Hola, ${user?.name?.trim()}!`}
                     </Typography>
                     <Typography
-                        variant='h2'
+                        variant='h5'
                         component={motion.div}
                         textTransform='uppercase'
                         animate={{ y: 0, opacity: 1 }}
@@ -198,34 +204,15 @@ function SecretFriend() {
                 </Box>
                 {!winner && (
                     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
-                        <Button
-                            onClick={spin}
-                            disabled={spinning}
-                            sx={{
-                                px: 6,
-                                py: 1.5,
-                                fontWeight: 'bold',
-                                fontSize: '1.1rem',
-                                background: 'linear-gradient(90deg, #0045C4, #1565c0)',
-                                color: '#fff',
-                                boxShadow: '0 4px 15px rgba(0,0,0,0.3)',
-                                transition: 'all 0.3s ease',
-                                '&:hover': {
-                                    transform: 'scale(1.05)',
-                                    background: 'linear-gradient(90deg, #1565c0, #0045C4)',
-                                },
-                                '&:active': { transform: 'scale(0.97)' },
-                            }}
-                        >
-                            {spinning ? 'Buscando...' : 'Buscar'}
-                        </Button>
-                        {spinning && <CircularProgress color='inherit' />}
+                        <SpinButton spinning={spinning} onClick={spin}/>
                     </Box>
                 )}
                 {winner && (
                     <>
-                        <Confetti recycle={false} numberOfPieces={250} width={window.innerWidth} height={window.innerHeight}/>
-                        <motion.div initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 1.2, ease: 'easeOut' }}>
+                        <Confetti recycle={false} numberOfPieces={250} width={width}height={height}/>
+                        <motion.div 
+                            initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 1.2, ease: 'easeOut' }}
+                        >
                             <Box
                                 sx={{
                                     p: 2,
@@ -237,10 +224,10 @@ function SecretFriend() {
                                 }}
                             >
                                 <Typography
-                                    variant='h2'
+                                    variant='h5'
                                     sx={{
-                                        fontWeight: 'bold',
                                         color: '#fff',
+                                        fontWeight: 'bold',
                                         textTransform: 'uppercase',
                                     }}
                                 >
@@ -249,16 +236,16 @@ function SecretFriend() {
                                 {winner?.photoBase64 && (
                                     <Box
                                         component='img'
-                                        src={winner.photoBase64}
                                         alt={winner.name}
+                                        src={winner.photoBase64}
                                         sx={{
                                             mt: 2,
-                                            width: 150,
-                                            height: 200,
                                             boxShadow: 3,
                                             objectFit: 'cover',
                                             borderRadius: '10%',
                                             border: '4px solid white',
+                                            width: { xs: 100, sm: 120, md: 150 },
+                                            height: { xs: 130, sm: 160, md: 200 },
                                         }}
                                     />
                                 )}
@@ -266,33 +253,87 @@ function SecretFriend() {
                         </motion.div>
                     </>
                 )}
-                {user?.role === 'admin' && !winner && (
+                {/* {user?.role === 'admin' && !winner && (
                     <Box sx={{ mt: 4, textAlign: 'center' }}>
                         <Button
-                            onClick={assignSecretFriends}
                             sx={{
                                 px: 6,
                                 py: 1.5,
+                                color: '#fff',
                                 fontWeight: 'bold',
                                 fontSize: '1.1rem',
-                                background: 'linear-gradient(90deg, #0045C4, #1565c0)',
-                                color: '#fff',
-                                boxShadow: '0 4px 15px rgba(0,0,0,0.3)',
                                 transition: 'all 0.3s ease',
-                                '&:hover': {
-                                transform: 'scale(1.05)',
-                                background: 'linear-gradient(90deg, #1565c0, #0045C4)',
-                                },
                                 '&:active': { transform: 'scale(0.97)' },
+                                boxShadow: '0 4px 15px rgba(0,0,0,0.3)',
+                                background: 'linear-gradient(90deg, #0045C4, #1565c0)',
+                                '&:hover': {
+                                    transform: 'scale(1.05)',
+                                    background: 'linear-gradient(90deg, #1565c0, #0045C4)',
+                                },
                             }}
+                            onClick={assignSecretFriends}
                         >
                             {`Repartir automáticamente`}
                         </Button>
                     </Box>
-                )}
+                )} */}
             </Paper>
         </Container>
     );      
+};
+
+function SpinButton({ spinning, onClick }) {
+
+    const SIZE = 80;
+
+    return (
+        <Box
+            sx={{
+                width: SIZE,
+                height: SIZE,
+                position: 'relative',
+                alignItems: 'center',
+                display: 'inline-flex',
+                justifyContent: 'center',
+            }}
+        >
+            {spinning && (
+                <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}
+                    style={{
+                        width: SIZE,
+                        height: SIZE,
+                        borderRadius: '50%',
+                        position: 'absolute',
+                        boxSizing: 'border-box',
+                        border: '6px solid #1976d2',
+                        borderTop: '6px solid #ff0080',
+                    }}
+                />
+            )}
+            <motion.button
+                onClick={onClick}
+                disabled={spinning}
+                whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1.1 }}
+                style={{
+                    width: SIZE,
+                    height: SIZE,
+                    color: '#fff',
+                    fontSize: '1rem',
+                    cursor: 'pointer',
+                    fontWeight: 'bold',
+                    border: 'none',
+                    borderRadius: '50%',
+                    boxShadow: '0 4px 15px rgba(0,0,0,0.3)',
+                    background: 'linear-gradient(90deg, #0045C4, #1565c0)',
+                }}
+            >
+                {spinning ? '...' : 'GO'}
+            </motion.button>
+        </Box>
+    );
 };
 
 export default SecretFriend;
