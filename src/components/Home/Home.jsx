@@ -73,7 +73,7 @@ function Home({ currentUser }) {
                 <Stack spacing={2} sx={{ mb: { xs: 3, md: 4 } }}>
                     <Box component={motion.div} whileHover={{ scale: 1.05 }} transition={{ duration: 0.3 }}>
                         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems='center'>
-                        <PersonAdd sx={{ color: '#0090C4' }} fontSize='large' />
+                        <PersonAdd sx={{ color: '#0090C4' }} fontSize='large'/>
                         <Typography variant='body1' color='#000'>
                             {`Paso 1: Inicia sesión`}
                         </Typography>
@@ -81,7 +81,7 @@ function Home({ currentUser }) {
                     </Box>
                     <Box component={motion.div} whileHover={{ scale: 1.05 }} transition={{ duration: 0.3 }}>
                         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems='center'>
-                        <Casino sx={{ color: '#0090C4' }} fontSize='large' />
+                        <Casino sx={{ color: '#0090C4' }} fontSize='large'/>
                         <Typography variant='body1' color='#000'>
                             {`Paso 2: Buscar y descubre tu amigo secreto`}
                         </Typography>
@@ -89,7 +89,7 @@ function Home({ currentUser }) {
                     </Box>
                     <Box component={motion.div} whileHover={{ scale: 1.05 }} transition={{ duration: 0.3 }}>
                         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems='center'>
-                        <CardGiftcard sx={{ color: '#0090C4' }} fontSize='large' />
+                        <CardGiftcard sx={{ color: '#0090C4' }} fontSize='large'/>
                         <Typography variant='body1' color='#000'>
                             {`Paso 3: Disfruta y sorprende con tu regalo`}
                         </Typography>
@@ -116,7 +116,7 @@ function Home({ currentUser }) {
                                 component={Link}
                                 to='/secretFriend'
                                 variant='contained'
-                                sx={{ py: 1.5, fontWeight: 'bold', px: { xs: 3, md: 5 }, ':hover': { color: '#000' }}}
+                                sx={{ py: 1.5, fontWeight: 'bold', px: { xs: 3, md: 5 }, ':hover': { color: '#fff' }}}
                             >
                                 {'Amigo secreto'}
                             </Button>

@@ -65,14 +65,14 @@ function App() {
 
     return (
         <Router>
-            <nav style={{ padding: '1rem', textAlign: 'center' }}>
+            <nav style={{ padding: '1rem', textAlign: 'center', justifyItems: 'center', justifyContent: 'center', alignContent: 'center', alignItems: 'center' }}>
                 <Link to='/home'>Inicio</Link>
                 {currentUser ? (
                     <>
                         {currentUserRole === 'admin' && (
                             <Link to='/admin' style={{ margin: '0 1rem' }}>Administración</Link>
                         )}
-                        <button onClick={handleLogout}>Cerrar sesión</button>
+                        <button onClick={handleLogout} style={{ margin: '0 1rem' }}>Cerrar sesión</button>
                     </>
                 ) : (
                     <Link to='/register'>Iniciar sesión / Registro</Link>
