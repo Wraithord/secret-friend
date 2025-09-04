@@ -104,17 +104,6 @@ function Register() {
                         >
                             {loading ? 'Procesando...' : isLogin ? 'Iniciar sesión' : 'Registrarse'}
                         </Button>
-                        <Divider>o</Divider>
-                        <Box textAlign='center'>
-                            <Button
-                                variant='text'
-                                color='primary'
-                                onClick={() => setIsLogin(!isLogin)}
-                                sx={{ fontWeight: 'bold', ':hover': { color: '#fff' } }}
-                            >
-                                {isLogin ? '¿No tienes cuenta? Regístrate' : '¿Ya tienes cuenta? Inicia sesión'}
-                            </Button>
-                        </Box>
                     </Stack>
                 </form>
             </Paper>

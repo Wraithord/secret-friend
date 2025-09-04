@@ -75,7 +75,7 @@ function App() {
                         <button onClick={handleLogout} style={{ margin: '0 1rem' }}>Cerrar sesión</button>
                     </>
                 ) : (
-                    <Link to='/register'>Iniciar sesión / Registro</Link>
+                    <Link to='/register' style={{ margin: '0 1rem' }}>Iniciar sesión</Link>
                 )}
             </nav>
             <Routes>

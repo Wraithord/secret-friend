@@ -120,6 +120,26 @@ function UsersTable({ users, setUsers }) {
         return a?.name?.localeCompare(b?.name);
     });
 
+    const checkDuplicates = (users) => {
+        const counts = {};
+        const duplicates = new Set();
+    
+        users.forEach(u => {
+            const secretId = u?.amigoSecreto?.id;
+            if (secretId) {
+                counts[secretId] = (counts[secretId] || 0) + 1;
+                if (counts[secretId] > 1) {
+                    duplicates.add(secretId);
+                }
+            }
+        });
+    
+        return Array.from(duplicates);
+    };
+
+    const duplicateIds = checkDuplicates(sortedUsers);
+    const hasDuplicates = duplicateIds?.length > 0;
+
     console.log('sortedUsers:', sortedUsers);
 
     const handleResetSecret = async (userId) => {
@@ -214,69 +234,89 @@ function UsersTable({ users, setUsers }) {
             console.error(err);
             alert('Error al asignar a Brenda como amigo secreto');
         };
-    };    
+    };
 
     return (
-        <TableContainer component={Paper} sx={{ mt: 3 }}>
-            <Table>
-                <TableHead>
-                    <TableRow>
-                        <TableCell align='center'>#</TableCell>
-                        <TableCell align='center'>Avatar</TableCell>
-                        <TableCell align='center'>Nombre</TableCell>
-                        <TableCell align='center'>Correo</TableCell>
-                        <TableCell align='center'>Acciones</TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {sortedUsers?.map((u, index) => (
-                        <TableRow key={u?.id}>
-                            <TableCell align='center'>{index + 1}</TableCell>
-                            <TableCell align='center'>
-                                <AvatarWithZoom user={u} />
-                            </TableCell>
-                            <TableCell align='center'>{u?.name}</TableCell>
-                            <TableCell align='center'>{u?.email}</TableCell>
-                            <TableCell align='center'>
-                                <Button
-                                    size='small'
-                                    color='error'
-                                    variant='text'
-                                    disabled={!u?.amigoSecreto}
-                                    onClick={() => handleResetSecret(u?.id)}
-                                    sx={{ ':hover': { color: '#fff', backgroundColor: 'red' } }}
-                                >
-                                    <DeleteIcon/>
-                                </Button>
-                                <input
-                                    type='file'
-                                    accept='image/*'
-                                    style={{ display: 'none' }}
-                                    id={`upload-photo-${u?.id}`}
-                                    onChange={(e) => handleUploadPhoto(e, u?.id)}
-                                />
-                                <label htmlFor={`upload-photo-${u.id}`}>
-                                    <IconButton color='primary' component='span'>
-                                        <AddPhotoAlternateIcon/>
-                                    </IconButton>
-                                </label>
-                                {u?.role === 'admin' && (
-                                    <Button
-                                        size='small'
-                                        variant='text'
-                                        color='success'
-                                        onClick={() => handleAssignUser(u?.id)}
-                                        sx={{ ':hover': { color: '#fff', backgroundColor: 'green' } }}
-                                    >
-                                        <PersonAddIcon/>
-                                    </Button>
-                                )}
-                            </TableCell>
+        <>
+            {hasDuplicates && (
+                <Paper sx={{ p: 2, mb: 2, backgroundColor: "#ffe6e6" }}>
+                    <strong>⚠ Atención:</strong> Hay usuarios repetidos como amigo secreto.
+                </Paper>
+            )}
+            <TableContainer component={Paper} sx={{ mt: 3 }}>
+                <Table>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell align='center'>#</TableCell>
+                            <TableCell align='center'>Avatar</TableCell>
+                            <TableCell align='center'>Nombre</TableCell>
+                            <TableCell align='center'>Correo</TableCell>
+                            <TableCell align='center'>Acciones</TableCell>
                         </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
-        </TableContainer>
+                    </TableHead>
+                    <TableBody>
+                        {sortedUsers?.map((u, index) => {
+                            const isDuplicate = duplicateIds.includes(u?.amigoSecreto?.id);
+                            return (
+                                <TableRow 
+                                    key={u?.id} 
+                                    sx={isDuplicate ? { backgroundColor: '#fff0f0' } : {}}
+                                >
+                                    <TableCell align='center'>{index + 1}</TableCell>
+                                    <TableCell align='center'>
+                                        <AvatarWithZoom user={u} />
+                                    </TableCell>
+                                    <TableCell align='center'>
+                                        {u?.name}
+                                        {isDuplicate && (
+                                            <Typography variant="caption" color="error" display="block">
+                                                {`⚠ Amigo secreto repetido`}
+                                            </Typography>
+                                        )}
+                                    </TableCell>
+                                    <TableCell align='center'>{u?.email}</TableCell>
+                                    <TableCell align='center'>
+                                        <Button
+                                            size='small'
+                                            color='error'
+                                            variant='text'
+                                            disabled={!u?.amigoSecreto}
+                                            onClick={() => handleResetSecret(u?.id)}
+                                            sx={{ ':hover': { color: '#fff', backgroundColor: 'red' } }}
+                                        >
+                                            <DeleteIcon/>
+                                        </Button>
+                                        <input
+                                            type='file'
+                                            accept='image/*'
+                                            style={{ display: 'none' }}
+                                            id={`upload-photo-${u?.id}`}
+                                            onChange={(e) => handleUploadPhoto(e, u?.id)}
+                                        />
+                                        <label htmlFor={`upload-photo-${u.id}`}>
+                                            <IconButton color='primary' component='span'>
+                                                <AddPhotoAlternateIcon/>
+                                            </IconButton>
+                                        </label>
+                                        {/* {u?.role === 'admin' && ( */}
+                                            <Button
+                                                size='small'
+                                                variant='text'
+                                                color='success'
+                                                onClick={() => handleAssignUser(u?.id)}
+                                                sx={{ ':hover': { color: '#fff', backgroundColor: 'green' } }}
+                                            >
+                                                <PersonAddIcon/>
+                                            </Button>
+                                        {/* )} */}
+                                    </TableCell>
+                                </TableRow>
+                            )
+                        })}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+        </>
     );
 };
 
